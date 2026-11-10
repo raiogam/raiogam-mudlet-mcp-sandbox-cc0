@@ -1,0 +1,6 @@
+.git
+.env
+storage/state*
+storage/login-rate*
+reports
+work

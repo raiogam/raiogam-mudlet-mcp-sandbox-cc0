@@ -1,0 +1,61 @@
+name: Validate
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 6 * * *'
+permissions:
+  contents: read
+jobs:
+  panel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl
+          coverage: none
+      - name: PHP syntax
+        run: find src public bin tests -name '*.php' -exec php -l {} \;
+      - name: Backend and evidence rules
+        run: php tests/backend.php
+      - name: Runner boundaries and source fingerprints
+        run: php tests/runner.php
+      - name: GitHub cursor pagination
+        run: php tests/github.php
+      - name: HTTP authentication and persistence
+        run: python3 tests/http_api.py
+      - name: JavaScript syntax
+        run: node --check public/assets/app.js
+      - name: Frontend rendering and large inventory
+        run: node tests/frontend.cjs
+      - name: Mock contract only
+        run: |
+          mkdir -p reports
+          php bin/mcp-check.php --mode=mock --output=reports/mcp-mock.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: panel-mock-contract
+          path: reports/
+          retention-days: 14
+  github-snapshot:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl
+          coverage: none
+      - name: Read public upstream metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: php bin/github-sync.php --pages=3 --details=8576,12189,12185,12186,12187,12128
+      - uses: actions/upload-artifact@v4
+        with:
+          name: github-snapshot
+          path: storage/state.json
+          retention-days: 14
