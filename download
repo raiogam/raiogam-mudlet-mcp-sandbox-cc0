@@ -1,11 +1,1 @@
-/storage/*
-!/storage/.gitkeep
-/.env
-*.log
-/reports/
-/work/
-/.DS_Store
-__pycache__/
-*.pyc
-!/bin/
-!/bin/*.php
+
