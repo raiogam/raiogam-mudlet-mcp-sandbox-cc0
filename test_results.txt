@@ -1,0 +1,13 @@
+PASS - tools/list offers lua tool
+PASS - safe Lua example returns 4
+PASS - print output returned
+PASS - sandbox blocks unapproved execution
+PASS - bad token rejected
+PASS - nonlocal Origin rejected
+PASS - spoofed loopback Origin rejected
+PASS - legacy GET rejected
+PASS - old MCP version rejected
+PASS - unknown MCP tool rejected
+PASS - Bearer auth header accepted
+
+Sandbox mock tests: 11/11 PASS
